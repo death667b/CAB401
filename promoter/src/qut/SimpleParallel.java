@@ -8,8 +8,6 @@ import java.util.concurrent.locks.ReentrantLock;
 public class SimpleParallel
 {
     private static HashMap<String, Sigma70Consensus> consensus = new HashMap<String, Sigma70Consensus>();
-    private static final Matrix BLOSUM_62 = BLOSUM62.Load();
-    private static byte[] complement = new byte['z'];
     private static ReentrantLock lock = new ReentrantLock(true);
 
     private static List<Gene> ParseReferenceGenes(String referenceFile) throws FileNotFoundException, IOException
