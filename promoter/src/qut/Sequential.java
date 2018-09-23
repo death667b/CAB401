@@ -5,6 +5,7 @@ import jaligner.matrix.*;
 import edu.au.jacobi.pattern.*;
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 
 public class Sequential
 {
@@ -119,7 +120,7 @@ public class Sequential
         }
     }
 
-    public static void main(String[] args) throws FileNotFoundException, IOException
+    public static void main(String[] args) throws IOException, ExecutionException, InterruptedException
     {
         long startTime = System.nanoTime();
 
