@@ -9,10 +9,10 @@ import java.util.*;
 
 public class Sequential
 {
-    private static HashMap<String, Sigma70Consensus> consensus = new HashMap<String, Sigma70Consensus>();
+    protected static HashMap<String, Sigma70Consensus> consensus = new HashMap<String, Sigma70Consensus>();
     private static Series sigma70_pattern = Sigma70Definition.getSeriesAll_Unanchored(0.7);
-    private static final Matrix BLOSUM_62 = BLOSUM62.Load();
-    private static byte[] complement = new byte['z'];
+    protected static final Matrix BLOSUM_62 = BLOSUM62.Load();
+    protected static byte[] complement = new byte['z'];
 
     static
     {
@@ -23,7 +23,7 @@ public class Sequential
     }
 
 
-    private static List<Gene> ParseReferenceGenes(String referenceFile) throws FileNotFoundException, IOException
+    protected static List<Gene> ParseReferenceGenes(String referenceFile) throws FileNotFoundException, IOException
     {
         BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(referenceFile)));
         List<Gene> referenceGenes = new ArrayList<Gene>();
@@ -41,12 +41,12 @@ public class Sequential
         return referenceGenes;
     }
 
-    private static boolean Homologous(PeptideSequence A, PeptideSequence B)
+    protected static boolean Homologous(PeptideSequence A, PeptideSequence B)
     {
         return SmithWatermanGotoh.align(new Sequence(A.toString()), new Sequence(B.toString()), BLOSUM_62, 10f, 0.5f).calculateScore() >= 60;
     }
 
-    private static NucleotideSequence GetUpstreamRegion(NucleotideSequence dna, Gene gene)
+    protected static NucleotideSequence GetUpstreamRegion(NucleotideSequence dna, Gene gene)
     {
         int upStreamDistance = 250;
         if (gene.location < upStreamDistance)
@@ -64,12 +64,12 @@ public class Sequential
         }
     }
 
-    private static Match PredictPromoter(NucleotideSequence upStreamRegion)
+    public static Match PredictPromoter(NucleotideSequence upStreamRegion)
     {
         return BioPatterns.getBestMatch(sigma70_pattern, upStreamRegion.toString());
     }
 
-    private static void ProcessDir(List<String> list, File dir)
+    protected static void ProcessDir(List<String> list, File dir)
     {
         if (dir.exists())
             for (File file : dir.listFiles())
@@ -79,14 +79,14 @@ public class Sequential
                     list.add(file.getPath());
     }
 
-    private static List<String> ListGenbankFiles(String dir)
+    protected static List<String> ListGenbankFiles(String dir)
     {
         List<String> list = new ArrayList<String>();
         ProcessDir(list, new File(dir));
         return list;
     }
 
-    private static GenbankRecord Parse(String file) throws IOException
+    protected static GenbankRecord Parse(String file) throws IOException
     {
         GenbankRecord record = new GenbankRecord();
         BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
@@ -95,7 +95,7 @@ public class Sequential
         return record;
     }
 
-    public static void run(String referenceFile, String dir) throws FileNotFoundException, IOException
+    public static void run(String referenceFile, String dir) throws IOException
     {
         List<Gene> referenceGenes = ParseReferenceGenes(referenceFile);
         for (String filename : ListGenbankFiles(dir))
