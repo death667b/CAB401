@@ -20,7 +20,7 @@ public class SimpleParallel extends Sequential
             {
                 System.out.println(referenceGene.name);
                 for (Gene gene : record.genes)
-                    new Thread(new FindGeneRunnable(lock, gene, referenceGene, record, Sigma70Definition.getSeriesAll_Unanchored(0.7), consensus)).start();
+                    new Thread(new FindGeneRunnable(lock, gene, referenceGene, record, consensus)).start();
             }
         }
     }
