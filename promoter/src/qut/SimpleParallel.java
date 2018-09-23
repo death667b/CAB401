@@ -83,7 +83,7 @@ public class SimpleParallel
             {
                 System.out.println(referenceGene.name);
                 for (Gene gene : record.genes)
-                    new Thread(new FindGene(lock, gene, referenceGene, record, Sigma70Definition.getSeriesAll_Unanchored(0.7), consensus)).start();
+                    new Thread(new FindGeneRunnable(lock, gene, referenceGene, record, Sigma70Definition.getSeriesAll_Unanchored(0.7), consensus)).start();
             }
         }
     }
