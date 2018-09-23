@@ -1,6 +1,5 @@
 package qut;
 
-import qut.*;
 import jaligner.*;
 import jaligner.matrix.*;
 import edu.au.jacobi.pattern.*;
