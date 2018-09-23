@@ -5,54 +5,9 @@ import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
 
 
-public class SimpleParallel
+public class SimpleParallel extends Sequential
 {
-    private static HashMap<String, Sigma70Consensus> consensus = new HashMap<String, Sigma70Consensus>();
     private static ReentrantLock lock = new ReentrantLock(true);
-
-    private static List<Gene> ParseReferenceGenes(String referenceFile) throws IOException
-    {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(referenceFile)));
-        List<Gene> referenceGenes = new ArrayList<Gene>();
-        while (true)
-        {
-            String name = reader.readLine();
-            if (name == null)
-                break;
-            String sequence = reader.readLine();
-            referenceGenes.add(new Gene(name, 0, 0, sequence));
-            consensus.put(name, new Sigma70Consensus());
-        }
-        consensus.put("all", new Sigma70Consensus());
-        reader.close();
-        return referenceGenes;
-    }
-
-    private static void ProcessDir(List<String> list, File dir)
-    {
-        if (dir.exists())
-            for (File file : dir.listFiles())
-                if (file.isDirectory())
-                    ProcessDir(list, file);
-                else
-                    list.add(file.getPath());
-    }
-
-    private static List<String> ListGenbankFiles(String dir)
-    {
-        List<String> list = new ArrayList<String>();
-        ProcessDir(list, new File(dir));
-        return list;
-    }
-
-    private static GenbankRecord Parse(String file) throws IOException
-    {
-        GenbankRecord record = new GenbankRecord();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
-        record.Parse(reader);
-        reader.close();
-        return record;
-    }
 
     public static void run(String referenceFile, String dir) throws IOException
     {
