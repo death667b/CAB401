@@ -1,14 +1,7 @@
 package qut;
 
-import jaligner.BLOSUM62;
-import jaligner.matrix.Matrix;
-
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
+import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
 
 
