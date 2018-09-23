@@ -19,15 +19,6 @@ public class SimpleParallel
     private static byte[] complement = new byte['z'];
     private static ReentrantLock lock = new ReentrantLock(true);
 
-    static
-    {
-        complement['C'] = 'G'; complement['c'] = 'g';
-        complement['G'] = 'C'; complement['g'] = 'c';
-        complement['T'] = 'A'; complement['t'] = 'a';
-        complement['A'] = 'T'; complement['a'] = 't';
-    }
-
-                    
     private static List<Gene> ParseReferenceGenes(String referenceFile) throws FileNotFoundException, IOException
     {
         BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(referenceFile)));
