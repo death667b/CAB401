@@ -1,82 +1,18 @@
 package qut;
 
-import jaligner.BLOSUM62;
-import jaligner.matrix.Matrix;
-
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
+import java.util.*;
+import java.util.concurrent.*;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
-public class ExecutorParallel
+public class ExecutorParallel extends Sequential
 {
-    private static HashMap<String, Sigma70Consensus> consensus = new HashMap<String, Sigma70Consensus>();
-    private static final Matrix BLOSUM_62 = BLOSUM62.Load();
-    private static byte[] complement = new byte['z'];
+    private static int nThreads = 4;
+    private static ExecutorService executor = Executors.newFixedThreadPool(nThreads);
+
     private static ReentrantLock lock = new ReentrantLock(true);
 
-    private static ExecutorService executor = Executors.newFixedThreadPool(4);
-
-    static
-    {
-        complement['C'] = 'G'; complement['c'] = 'g';
-        complement['G'] = 'C'; complement['g'] = 'c';
-        complement['T'] = 'A'; complement['t'] = 'a';
-        complement['A'] = 'T'; complement['a'] = 't';
-    }
-
-                    
-    private static List<Gene> ParseReferenceGenes(String referenceFile) throws FileNotFoundException, IOException
-    {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(referenceFile)));
-        List<Gene> referenceGenes = new ArrayList<Gene>();
-        while (true)
-        {
-            String name = reader.readLine();
-            if (name == null)
-                break;
-            String sequence = reader.readLine();
-            referenceGenes.add(new Gene(name, 0, 0, sequence));
-            consensus.put(name, new Sigma70Consensus());
-        }
-        consensus.put("all", new Sigma70Consensus());
-        reader.close();
-        return referenceGenes;
-    }
-
-    private static void ProcessDir(List<String> list, File dir)
-    {
-        if (dir.exists())
-            for (File file : dir.listFiles())
-                if (file.isDirectory())
-                    ProcessDir(list, file);
-                else
-                    list.add(file.getPath());
-    }
-
-    private static List<String> ListGenbankFiles(String dir)
-    {
-        List<String> list = new ArrayList<String>();
-        ProcessDir(list, new File(dir));
-        return list;
-    }
-
-    private static GenbankRecord Parse(String file) throws IOException
-    {
-        GenbankRecord record = new GenbankRecord();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
-        record.Parse(reader);
-        reader.close();
-        return record;
-    }
-
-    public static void run(String referenceFile, String dir) throws FileNotFoundException, IOException
+    public static void run(String referenceFile, String dir) throws IOException
     {
         List<Gene> referenceGenes = ParseReferenceGenes(referenceFile);
         for (String filename : ListGenbankFiles(dir))
@@ -87,25 +23,20 @@ public class ExecutorParallel
             {
                 System.out.println(referenceGene.name);
                 for (Gene gene : record.genes)
-                    executor.submit(new FindGene(lock, gene, referenceGene, record, Sigma70Definition.getSeriesAll_Unanchored(0.7), consensus));
+                    executor.submit(new FindGeneRunnable(lock, gene, referenceGene, record, consensus));
 
             }
         }
 
         executor.shutdown();
-        while(!executor.isShutdown()) {
-            System.out.println("not terminated");
-        }
         try {
-            executor.awaitTermination(20, TimeUnit.SECONDS);
+            executor.awaitTermination(10, TimeUnit.MINUTES);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        executor.shutdown();
-        executor.shutdownNow();
     }
 
-    public static void main(String[] args) throws FileNotFoundException, IOException, ExecutionException, InterruptedException
+    public static void main(String[] args) throws IOException
     {
         long startTime = System.nanoTime();
 
