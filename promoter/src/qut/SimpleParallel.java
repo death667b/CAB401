@@ -10,7 +10,7 @@ public class SimpleParallel
     private static HashMap<String, Sigma70Consensus> consensus = new HashMap<String, Sigma70Consensus>();
     private static ReentrantLock lock = new ReentrantLock(true);
 
-    private static List<Gene> ParseReferenceGenes(String referenceFile) throws FileNotFoundException, IOException
+    private static List<Gene> ParseReferenceGenes(String referenceFile) throws IOException
     {
         BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(referenceFile)));
         List<Gene> referenceGenes = new ArrayList<Gene>();
@@ -54,7 +54,7 @@ public class SimpleParallel
         return record;
     }
 
-    public static void run(String referenceFile, String dir) throws FileNotFoundException, IOException
+    public static void run(String referenceFile, String dir) throws IOException
     {
         List<Gene> referenceGenes = ParseReferenceGenes(referenceFile);
         for (String filename : ListGenbankFiles(dir))
@@ -70,7 +70,7 @@ public class SimpleParallel
         }
     }
 
-    public static void main(String[] args) throws FileNotFoundException, IOException, ExecutionException, InterruptedException
+    public static void main(String[] args) throws IOException
     {
         long startTime = System.nanoTime();
 
