@@ -7,18 +7,39 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.io.FileWriter;
+import java.io.File;
 
 public class TestRunner extends Sequential {
     public static int timesToRun = 20;
-    public static int [] threadArray = {1, 2, 3, 4};
+    public static int [] threadArray = {8};
 
+    private static void saveResults(String data) {
+        File file = new File("./FileWriter.txt");
+        FileWriter fr = null;
+        try {
+            fr = new FileWriter(file, true);
+            fr.write(data);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally{
+            //close resources
+            try {
+                fr.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
     public static void main(String[] args) throws IOException, ExecutionException, InterruptedException {
         double startTime, endTime, timeElapsed,  avgTime = 0;
         DecimalFormat df2 = new DecimalFormat(".##");
+        Object SYN_LOCK = new Object();
+        String disp;
 
         // This is the main test - this is everything
-        String testingOutput = "all Consensus: -35: T T G A C A gap: 17.6 -10: T A T A A T  (5430 matches)" +
+        String xtestingOutput = "all Consensus: -35: T T G A C A gap: 17.6 -10: T A T A A T  (5430 matches)" +
                 "fixB Consensus: -35: T T G A C A gap: 17.7 -10: T A T A A T  (965 matches)" +
                 "carA Consensus: -35: T T G A C A gap: 17.7 -10: T A T A A T  (1079 matches)" +
                 "fixA Consensus: -35: T T G A C A gap: 17.6 -10: T A T A A T  (896 matches)" +
@@ -31,82 +52,105 @@ public class TestRunner extends Sequential {
         // Just using this to test the output while building the testRunner
         // In the Ecoli folder - only have 'Escherichia_coli_BW2952_uid59391' folder
         // In the referenceGenes.list only have yaaY and nhaA data
-        String xtestingOutput = "all Consensus: -35: T T G A C A gap: 17.5 -10: T A T A A T  (467 matches)" +
+        String testingOutput = "all Consensus: -35: T T G A C A gap: 17.5 -10: T A T A A T  (467 matches)" +
                 "yaaY Consensus: -35: T T G T C G gap: 18.0 -10: T A T A C T  (1 matches)" +
                 "nhaA Consensus: -35: T T G A C A gap: 17.5 -10: T A T A A T  (466 matches)";
 
         String runOutput = "";
 
         // Get Average Sequential time
-        System.out.println("    --:Sequential(Original, 1 thread only):--");
+        disp = "    --:Sequential(Original, 1 thread only):--\n";
         avgTime = 0.0;
         for (int runNumber = 0; runNumber < timesToRun; runNumber++) {
             startTime = System.nanoTime();
 
-            Sequential.run("referenceGenes.list", "Ecoli");
+            //Sequential.run("referenceGenes.list", "Ecoli");
 
             endTime = System.nanoTime();
             timeElapsed = endTime - startTime;
             avgTime += timeElapsed;
 
-            System.out.print("Test #" + (runNumber+1) + "/" + timesToRun  + " " + df2.format(timeElapsed/ 1000000000) + " seconds");
+            disp += "Test #" + (runNumber+1) + "/" + timesToRun  + " " + df2.format(timeElapsed/ 1000000000) + " seconds";
 
             for (Map.Entry<String, Sigma70Consensus> entry : consensus.entrySet())
                 runOutput += entry.getKey() + entry.getValue();
 
             if (testingOutput.equals(runOutput))
-                System.out.println(" (Correct output)");
+                disp += " (Correct output)\n";
             else
-                System.out.println(" *** OUTPUT IS FALSE ***");
+                disp += " *** OUTPUT IS FALSE ***\n";
+
+            System.out.print(disp);
+            saveResults(disp);
+            disp = "";
 
             consensus.clear();
             runOutput = "";
         }
         avgTime /= timesToRun;
-        System.out.println("Average runtime: "  + df2.format(avgTime / 1000000000) + "\n");
+        disp = "Average runtime: "  + df2.format(avgTime / 1000000000) + "\n\n";
+
+        System.out.print(disp);
+        saveResults(disp);
         //////////////////////////
 
 
 
         // Get Average Simple Parallel time
         int numberOfSimpleThreads = Runtime.getRuntime().availableProcessors();
-        System.out.println("    --:Simple Parallel(Runs at max threads(" + numberOfSimpleThreads + ") ):--");
+        disp = "    --:Simple Parallel(Runs at max threads(" + numberOfSimpleThreads + ") ):--\n";
         avgTime = 0.0;
+        int synTimeOut = 1000;
         for (int runNumber = 0; runNumber < timesToRun; runNumber++) {
             startTime = System.nanoTime();
 
             SimpleParallel.run("referenceGenes.list", "Ecoli");
 
+            synchronized (SYN_LOCK) {
+                SYN_LOCK.wait(synTimeOut);
+            }
+
             endTime = System.nanoTime();
-            timeElapsed = endTime - startTime;
+            timeElapsed = endTime - startTime - (synTimeOut * 1000000 ); // adjust for the sync timeout
             avgTime += timeElapsed;
 
-            System.out.print("Test #" + (runNumber+1) + "/" + timesToRun  + " " + df2.format(timeElapsed/ 1000000000) + " seconds");
+            disp += "Test #" + (runNumber+1) + "/" + timesToRun  + " " + df2.format(timeElapsed/ 1000000000) + " seconds";
 
             for (Map.Entry<String, Sigma70Consensus> entry : consensus.entrySet())
                 runOutput += entry.getKey() + entry.getValue();
 
             if (testingOutput.equals(runOutput))
-                System.out.println(" (Correct output)");
+                disp += " (Correct output)\n";
             else
-                System.out.println(" *** OUTPUT IS FALSE ***");
+                disp += " *** OUTPUT IS FALSE ***\n";
+
+            System.out.print(disp);
+            saveResults(disp);
+            disp = "";
 
             consensus.clear();
             runOutput = "";
         }
         avgTime /= timesToRun;
-        System.out.println("Average runtime: "  + df2.format(avgTime / 1000000000) + "\n");
+        disp = "Average runtime: "  + df2.format(avgTime / 1000000000) + "\n\n";
+
+        System.out.print(disp);
+        saveResults(disp);
         //////////////////////////
 
 
 
         for(int numberOfThreads : threadArray) {
-            System.out.println("Running on " + numberOfThreads + " threads.");
-            System.out.println("Running " + timesToRun + " tests on each\n");
+            disp = "--------------------------------------------\n";
+            disp += "Running on " + numberOfThreads + " threads.\n";
+            disp += "Running " + timesToRun + " tests on each\n";
+            disp += "--------------------------------------------\n\n";
 
+            System.out.print(disp);
+            saveResults(disp);
 
             // Get Average Executor Parallel time
-            System.out.println("    --:ExecutorParallel (Running on " + numberOfThreads + " threads):--");
+            disp = "    --:ExecutorParallel (Running on " + numberOfThreads + " threads):--\n";
             avgTime = 0.0;
             for (int runNumber = 0; runNumber < timesToRun; runNumber++) {
                 ExecutorService executorServiceP = Executors.newFixedThreadPool(numberOfThreads);
@@ -126,26 +170,33 @@ public class TestRunner extends Sequential {
                 timeElapsed = endTime - startTime;
                 avgTime += timeElapsed;
 
-                System.out.print("Test #" + (runNumber + 1) + "/" + timesToRun + " " + df2.format(timeElapsed / 1000000000) + " seconds");
+                disp += "Test #" + (runNumber + 1) + "/" + timesToRun + " " + df2.format(timeElapsed / 1000000000) + " seconds";
 
                 for (Map.Entry<String, Sigma70Consensus> entry : consensus.entrySet())
                     runOutput += entry.getKey() + entry.getValue();
 
                 if (testingOutput.equals(runOutput))
-                    System.out.println(" (Correct output)");
+                    disp += " (Correct output)\n";
                 else
-                    System.out.println(" *** OUTPUT IS FALSE ***");
+                    disp += " *** OUTPUT IS FALSE ***\n";
+
+                System.out.print(disp);
+                saveResults(disp);
+                disp = "";
 
                 consensus.clear();
                 runOutput = "";
             }
             avgTime /= timesToRun;
-            System.out.println("Average runtime: " + df2.format(avgTime / 1000000000) + "\n");
+            disp = "Average runtime: " + df2.format(avgTime / 1000000000) + "\n\n";
+
+            System.out.print(disp);
+            saveResults(disp);
             //////////////////////////
 
 
             // Get Average Executor Lambda Parallel time
-            System.out.println("    --:ExecutorLambdaParallel (Running on " + numberOfThreads + " threads):--");
+            disp = "    --:ExecutorLambdaParallel (Running on " + numberOfThreads + " threads):--\n";
             avgTime = 0.0;
 
             for (int runNumber = 0; runNumber < timesToRun; runNumber++) {
@@ -166,27 +217,35 @@ public class TestRunner extends Sequential {
                 timeElapsed = endTime - startTime;
                 avgTime += timeElapsed;
 
-                System.out.print("Test #" + (runNumber + 1) + "/" + timesToRun + " " + df2.format(timeElapsed / 1000000000) + " seconds");
+                disp += "Test #" + (runNumber + 1) + "/" + timesToRun + " " + df2.format(timeElapsed / 1000000000) + " seconds";
 
                 for (Map.Entry<String, Sigma70Consensus> entry : consensus.entrySet())
                     runOutput += entry.getKey() + entry.getValue();
 
                 if (testingOutput.equals(runOutput))
-                    System.out.println(" (Correct output)");
+                    disp += " (Correct output)\n";
                 else
-                    System.out.println(" *** OUTPUT IS FALSE ***");
+                    disp += " *** OUTPUT IS FALSE ***\n";
+
+                System.out.print(disp);
+                saveResults(disp);
+                disp = "";
 
                 consensus.clear();
                 runOutput = "";
             }
 
             avgTime /= timesToRun;
-            System.out.println("Average runtime: " + df2.format(avgTime / 1000000000) + "\n");
+            disp = "Average runtime: " + df2.format(avgTime / 1000000000) + "\n\n";
+
+            System.out.print(disp);
+            saveResults(disp);
+
             //////////////////////////
 
 
             // Get Average Executor Lambda Callable time
-            System.out.println("    --:ExecutorLambdaCallable (Running on " + numberOfThreads + " threads):--");
+            disp = "    --:ExecutorLambdaCallable (Running on " + numberOfThreads + " threads):--\n";
             avgTime = 0.0;
             ExecutorService executorServiceLC = Executors.newFixedThreadPool(numberOfThreads);
             for (int runNumber = 0; runNumber < timesToRun; runNumber++) {
@@ -198,27 +257,34 @@ public class TestRunner extends Sequential {
                 timeElapsed = endTime - startTime;
                 avgTime += timeElapsed;
 
-                System.out.print("Test #" + (runNumber + 1) + "/" + timesToRun + " " + df2.format(timeElapsed / 1000000000) + " seconds");
+                disp += "Test #" + (runNumber + 1) + "/" + timesToRun + " " + df2.format(timeElapsed / 1000000000) + " seconds";
 
                 for (Map.Entry<String, Sigma70Consensus> entry : consensus.entrySet())
                     runOutput += entry.getKey() + entry.getValue();
 
                 if (testingOutput.equals(runOutput))
-                    System.out.println(" (Correct output)");
+                    disp += " (Correct output)\n";
                 else
-                    System.out.println(" *** OUTPUT IS FALSE ***");
+                    disp += " *** OUTPUT IS FALSE ***\n";
+
+                System.out.print(disp);
+                saveResults(disp);
+                disp = "";
 
                 consensus.clear();
                 runOutput = "";
             }
             executorServiceLC.shutdown();
             avgTime /= timesToRun;
-            System.out.println("Average runtime: " + df2.format(avgTime / 1000000000) + "\n");
+            disp = "Average runtime: " + df2.format(avgTime / 1000000000) + "\n\n";
+
+            System.out.print(disp);
+            saveResults(disp);
             //////////////////////////
 
 
             // Get Average Executor Callable time
-            System.out.println("    --:ExecutorCallable (Running on " + numberOfThreads + " threads):--");
+            disp = "    --:ExecutorCallable (Running on " + numberOfThreads + " threads):--\n";
             avgTime = 0.0;
             ExecutorService executorServiceC = Executors.newFixedThreadPool(numberOfThreads);
             for (int runNumber = 0; runNumber < timesToRun; runNumber++) {
@@ -230,22 +296,29 @@ public class TestRunner extends Sequential {
                 timeElapsed = endTime - startTime;
                 avgTime += timeElapsed;
 
-                System.out.print("Test #" + (runNumber + 1) + "/" + timesToRun + " " + df2.format(timeElapsed / 1000000000) + " seconds");
+                disp += "Test #" + (runNumber + 1) + "/" + timesToRun + " " + df2.format(timeElapsed / 1000000000) + " seconds";
 
                 for (Map.Entry<String, Sigma70Consensus> entry : consensus.entrySet())
                     runOutput += entry.getKey() + entry.getValue();
 
                 if (testingOutput.equals(runOutput))
-                    System.out.println(" (Correct output)");
+                    disp += " (Correct output)\n";
                 else
-                    System.out.println(" *** OUTPUT IS FALSE ***");
+                disp += " *** OUTPUT IS FALSE ***\n";
+
+                System.out.print(disp);
+                saveResults(disp);
+                disp = "";
 
                 consensus.clear();
                 runOutput = "";
             }
             executorServiceC.shutdown();
             avgTime /= timesToRun;
-            System.out.println("Average runtime: " + df2.format(avgTime / 1000000000));
+            disp = "Average runtime: " + df2.format(avgTime / 1000000000) + "\n\n";
+
+            System.out.print(disp);
+            saveResults(disp);
             //////////////////////////
         }
     }
