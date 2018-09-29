@@ -98,10 +98,8 @@ public class Sequential {
     public static void run(String referenceFile, String dir) throws IOException {
         List<Gene> referenceGenes = ParseReferenceGenes(referenceFile);
         for (String filename : ListGenbankFiles(dir)) {
-            System.out.println(filename);
             GenbankRecord record = Parse(filename);
             for (Gene referenceGene : referenceGenes) {
-                System.out.println(referenceGene.name);
                 for (Gene gene : record.genes)
                     if (Homologous(gene.sequence, referenceGene.sequence)) {
                         NucleotideSequence upStreamRegion = GetUpstreamRegion(record.nucleotides, gene);

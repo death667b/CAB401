@@ -9,36 +9,34 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class ExecutorParallel extends Sequential {
-    private static int nThreads = 4;
-    private static ExecutorService executor = Executors.newFixedThreadPool(nThreads);
-
     private static ReentrantLock lock = new ReentrantLock(true);
 
-    public static void run(String referenceFile, String dir) throws IOException {
+    public static void run(String referenceFile, String dir, ExecutorService executorServiceP) throws IOException {
         List<Gene> referenceGenes = ParseReferenceGenes(referenceFile);
         for (String filename : ListGenbankFiles(dir)) {
-            System.out.println(filename);
             GenbankRecord record = Parse(filename);
             for (Gene referenceGene : referenceGenes) {
-                System.out.println(referenceGene.name);
                 for (Gene gene : record.genes)
-                    executor.submit(new FindGeneRunnable(lock, gene, referenceGene, record, consensus));
+                    executorServiceP.submit(new FindGeneRunnable(lock, gene, referenceGene, record, consensus));
 
             }
-        }
-
-        executor.shutdown();
-        try {
-            executor.awaitTermination(10, TimeUnit.MINUTES);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
     }
 
     public static void main(String[] args) throws IOException {
+        int numberOfThreads = Runtime.getRuntime().availableProcessors();
+        ExecutorService executorServiceP = Executors.newFixedThreadPool(numberOfThreads);
+
         long startTime = System.nanoTime();
 
-        run("referenceGenes.list", "Ecoli");
+        run("referenceGenes.list", "Ecoli", executorServiceP);
+
+        executorServiceP.shutdown();
+        try {
+            executorServiceP.awaitTermination(10, TimeUnit.MINUTES);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         long endTime = System.nanoTime();
         long timeElapsed = endTime - startTime;

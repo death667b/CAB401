@@ -14,17 +14,13 @@ import java.util.concurrent.locks.ReentrantLock;
 public class ExecutorLambdaParallel extends Sequential {
     private static ReentrantLock lock = new ReentrantLock(true);
 
-    private static ExecutorService executor = Executors.newFixedThreadPool(4);
-
-    public static void run(String referenceFile, String dir) throws IOException {
+    public static void run(String referenceFile, String dir, ExecutorService executorServiceLP) throws IOException {
         List<Gene> referenceGenes = ParseReferenceGenes(referenceFile);
         for (String filename : ListGenbankFiles(dir)) {
-            System.out.println(filename);
             GenbankRecord record = Parse(filename);
             for (Gene referenceGene : referenceGenes) {
-                System.out.println(referenceGene.name);
                 for (Gene gene : record.genes)
-                    executor.submit(() -> {
+                    executorServiceLP.submit(() -> {
                         if (Homologous(gene.sequence, referenceGene.sequence)) {
                             NucleotideSequence upStreamRegion = GetUpstreamRegion(record.nucleotides, gene);
 
@@ -56,18 +52,22 @@ public class ExecutorLambdaParallel extends Sequential {
             }
         }
 
-        executor.shutdown();
-        try {
-            executor.awaitTermination(10, TimeUnit.MINUTES);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 
     public static void main(String[] args) throws IOException, ExecutionException, InterruptedException {
+        int numberOfThreads = Runtime.getRuntime().availableProcessors();
+        ExecutorService executorServiceLP = Executors.newFixedThreadPool(numberOfThreads);
+
         long startTime = System.nanoTime();
 
-        run("referenceGenes.list", "Ecoli");
+        run("referenceGenes.list", "Ecoli", executorServiceLP);
+
+        executorServiceLP.shutdown();
+        try {
+            executorServiceLP.awaitTermination(10, TimeUnit.MINUTES);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         long endTime = System.nanoTime();
         long timeElapsed = endTime - startTime;
