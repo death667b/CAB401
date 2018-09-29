@@ -12,7 +12,7 @@ import java.io.File;
 
 public class TestRunner extends Sequential {
     public static int timesToRun = 20;
-    public static int [] threadArray = {8};
+    public static int [] threadArray = {1,2,4,8};
 
     private static void saveResults(String data) {
         File file = new File("./FileWriter.txt");
@@ -39,7 +39,7 @@ public class TestRunner extends Sequential {
         String disp;
 
         // This is the main test - this is everything
-        String xtestingOutput = "all Consensus: -35: T T G A C A gap: 17.6 -10: T A T A A T  (5430 matches)" +
+        String testingOutput = "all Consensus: -35: T T G A C A gap: 17.6 -10: T A T A A T  (5430 matches)" +
                 "fixB Consensus: -35: T T G A C A gap: 17.7 -10: T A T A A T  (965 matches)" +
                 "carA Consensus: -35: T T G A C A gap: 17.7 -10: T A T A A T  (1079 matches)" +
                 "fixA Consensus: -35: T T G A C A gap: 17.6 -10: T A T A A T  (896 matches)" +
@@ -52,7 +52,7 @@ public class TestRunner extends Sequential {
         // Just using this to test the output while building the testRunner
         // In the Ecoli folder - only have 'Escherichia_coli_BW2952_uid59391' folder
         // In the referenceGenes.list only have yaaY and nhaA data
-        String testingOutput = "all Consensus: -35: T T G A C A gap: 17.5 -10: T A T A A T  (467 matches)" +
+        String xtestingOutput = "all Consensus: -35: T T G A C A gap: 17.5 -10: T A T A A T  (467 matches)" +
                 "yaaY Consensus: -35: T T G T C G gap: 18.0 -10: T A T A C T  (1 matches)" +
                 "nhaA Consensus: -35: T T G A C A gap: 17.5 -10: T A T A A T  (466 matches)";
 
@@ -64,7 +64,7 @@ public class TestRunner extends Sequential {
         for (int runNumber = 0; runNumber < timesToRun; runNumber++) {
             startTime = System.nanoTime();
 
-            //Sequential.run("referenceGenes.list", "Ecoli");
+            Sequential.run("referenceGenes.list", "Ecoli");
 
             endTime = System.nanoTime();
             timeElapsed = endTime - startTime;
