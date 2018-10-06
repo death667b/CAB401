@@ -13,7 +13,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class ExecutorLambdaCallable extends Sequential {
+public class ExecutorArrayComposeLambdaCallable extends Sequential {
     private static ReentrantLock lock = new ReentrantLock(true);
 
     public static Match PredictPromoter(NucleotideSequence upStreamRegion) {
@@ -25,8 +25,13 @@ public class ExecutorLambdaCallable extends Sequential {
         List<Callable<Void>> executorList = new ArrayList<>();
 
         List<Gene> referenceGenes = ParseReferenceGenes(referenceFile);
-        for (String filename : ListGenbankFiles(dir)) {
-            GenbankRecord record = Parse(filename);
+
+        List<GenbankRecord> records = new ArrayList<>();
+
+        for (String filename : ListGenbankFiles(dir))
+            records.add(Parse(filename));
+
+        for (GenbankRecord record : records) {
             for (Gene referenceGene : referenceGenes) {
                 for (Gene gene : record.genes) {
                     executorList.add(() -> {
@@ -83,8 +88,10 @@ public class ExecutorLambdaCallable extends Sequential {
         for (Map.Entry<String, Sigma70Consensus> entry : consensus.entrySet())
             System.out.println(entry.getKey() + " " + entry.getValue());
 
-        System.out.println("Executing time in seconds: " + timeElapsed / 1000000000);
+        System.out.println("Executing time in seconds: " + df2.format(timeElapsed/ 1000000000.0));
 
 
     }
 }
+
+//74.0

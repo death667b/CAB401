@@ -39,7 +39,7 @@ public class TestRunner extends Sequential {
         String disp;
 
         // This is the main test - this is everything
-        String testingOutput = "all Consensus: -35: T T G A C A gap: 17.6 -10: T A T A A T  (5430 matches)" +
+        String xtestingOutput = "all Consensus: -35: T T G A C A gap: 17.6 -10: T A T A A T  (5430 matches)" +
                 "fixB Consensus: -35: T T G A C A gap: 17.7 -10: T A T A A T  (965 matches)" +
                 "carA Consensus: -35: T T G A C A gap: 17.7 -10: T A T A A T  (1079 matches)" +
                 "fixA Consensus: -35: T T G A C A gap: 17.6 -10: T A T A A T  (896 matches)" +
@@ -52,14 +52,52 @@ public class TestRunner extends Sequential {
         // Just using this to test the output while building the testRunner
         // In the Ecoli folder - only have 'Escherichia_coli_BW2952_uid59391' folder
         // In the referenceGenes.list only have yaaY and nhaA data
-        String xtestingOutput = "all Consensus: -35: T T G A C A gap: 17.5 -10: T A T A A T  (467 matches)" +
+        String testingOutput = "all Consensus: -35: T T G A C A gap: 17.5 -10: T A T A A T  (467 matches)" +
                 "yaaY Consensus: -35: T T G T C G gap: 18.0 -10: T A T A C T  (1 matches)" +
                 "nhaA Consensus: -35: T T G A C A gap: 17.5 -10: T A T A A T  (466 matches)";
 
         String runOutput = "";
 
-        // Get Average Sequential time
+        // Get Average SequentialOrig time
         disp = "    --:Sequential(Original, 1 thread only):--\n";
+        avgTime = 0.0;
+        for (int runNumber = 0; runNumber < timesToRun; runNumber++) {
+            startTime = System.nanoTime();
+
+            SequentialOrig.run("referenceGenes.list", "Ecoli");
+
+            endTime = System.nanoTime();
+            timeElapsed = endTime - startTime;
+            avgTime += timeElapsed;
+
+            disp += "Test #" + (runNumber+1) + "/" + timesToRun  + " " + df2.format(timeElapsed/ 1000000000) + " seconds";
+
+            for (Map.Entry<String, Sigma70Consensus> entry : consensus.entrySet())
+                runOutput += entry.getKey() + entry.getValue();
+
+            if (testingOutput.equals(runOutput))
+                disp += " (Correct output)\n";
+            else
+                disp += " *** OUTPUT IS FALSE ***\n";
+
+            System.out.print(disp);
+            saveResults(disp);
+            disp = "";
+
+            consensus.clear();
+            runOutput = "";
+        }
+        avgTime /= timesToRun;
+        disp = "Average runtime: "  + df2.format(avgTime / 1000000000) + "\n\n";
+
+        System.out.print(disp);
+        saveResults(disp);
+        //////////////////////////
+
+
+
+        // Get Average SequentialMod time
+        disp = "    --:Sequential(Modified, 1 thread only):--\n";
         avgTime = 0.0;
         for (int runNumber = 0; runNumber < timesToRun; runNumber++) {
             startTime = System.nanoTime();

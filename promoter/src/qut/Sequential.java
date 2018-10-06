@@ -8,6 +8,7 @@ import jaligner.SmithWatermanGotoh;
 import jaligner.matrix.Matrix;
 
 import java.io.*;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,10 +16,12 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 public class Sequential {
-    private static final Matrix BLOSUM_62 = BLOSUM62.Load();
+    protected static final Matrix BLOSUM_62 = BLOSUM62.Load();
     protected static HashMap<String, Sigma70Consensus> consensus = new HashMap<String, Sigma70Consensus>();
     protected static byte[] complement = new byte['z'];
     private static Series sigma70_pattern = Sigma70Definition.getSeriesAll_Unanchored(0.7);
+
+    protected static DecimalFormat df2 = new DecimalFormat(".##");
 
     static {
         complement['C'] = 'G';
@@ -50,6 +53,7 @@ public class Sequential {
 
     protected static boolean Homologous(PeptideSequence A, PeptideSequence B) {
         return SmithWatermanGotoh.align(new Sequence(A.toString()), new Sequence(B.toString()), BLOSUM_62, 10f, 0.5f).calculateScore() >= 60;
+//        return SWG.align(new Sequence(A.toString()), new Sequence(B.toString()), BLOSUM_62, 10f, 0.5f).calculateScore() >= 60;
     }
 
     protected static NucleotideSequence GetUpstreamRegion(NucleotideSequence dna, Gene gene) {
@@ -97,8 +101,12 @@ public class Sequential {
 
     public static void run(String referenceFile, String dir) throws IOException {
         List<Gene> referenceGenes = ParseReferenceGenes(referenceFile);
-        for (String filename : ListGenbankFiles(dir)) {
-            GenbankRecord record = Parse(filename);
+        List<GenbankRecord> records = new ArrayList<>();
+
+        for (String filename : ListGenbankFiles(dir))
+            records.add(Parse(filename));
+
+        for (GenbankRecord record : records) {
             for (Gene referenceGene : referenceGenes) {
                 for (Gene gene : record.genes)
                     if (Homologous(gene.sequence, referenceGene.sequence)) {
@@ -124,6 +132,8 @@ public class Sequential {
         for (Map.Entry<String, Sigma70Consensus> entry : consensus.entrySet())
             System.out.println(entry.getKey() + " " + entry.getValue());
 
-        System.out.println("Executing time in seconds: " + timeElapsed / 1000000000);
+        System.out.println("Executing time in seconds: " + df2.format(timeElapsed/ 1000000000.0));
     }
 }
+
+// 178

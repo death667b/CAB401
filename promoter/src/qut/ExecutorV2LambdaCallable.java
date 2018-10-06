@@ -13,7 +13,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class ExecutorLambdaCallable extends Sequential {
+public class ExecutorV2LambdaCallable extends Sequential {
     private static ReentrantLock lock = new ReentrantLock(true);
 
     public static Match PredictPromoter(NucleotideSequence upStreamRegion) {
@@ -28,8 +28,8 @@ public class ExecutorLambdaCallable extends Sequential {
         for (String filename : ListGenbankFiles(dir)) {
             GenbankRecord record = Parse(filename);
             for (Gene referenceGene : referenceGenes) {
-                for (Gene gene : record.genes) {
-                    executorList.add(() -> {
+                executorList.add(() -> {
+                    for (Gene gene : record.genes) {
                         if (Homologous(gene.sequence, referenceGene.sequence)) {
                             NucleotideSequence upStreamRegion = GetUpstreamRegion(record.nucleotides, gene);
                             Match prediction = PredictPromoter(upStreamRegion);
@@ -53,13 +53,12 @@ public class ExecutorLambdaCallable extends Sequential {
                                 }
                             }
                         }
-
-                        return null;
-                    });
-                }
+                    }
+                    return null;
+                });
             }
         }
-
+        System.out.println("Size: " + executorList.size());
 
         try {
             executorServiceLC.invokeAll(executorList);

@@ -59,7 +59,7 @@ public class ExecutorLambdaCallable extends Sequential {
                 }
             }
         }
-
+        System.out.println("Size: " + executorList.size());
 
         try {
             executorServiceLC.invokeAll(executorList);
@@ -75,14 +75,16 @@ public class ExecutorLambdaCallable extends Sequential {
         ExecutorService executorServiceLC = Executors.newFixedThreadPool(numberOfThreads);
         run("referenceGenes.list", "Ecoli", executorServiceLC);
 
+        executorServiceLC.shutdown();
+
         long endTime = System.nanoTime();
         long timeElapsed = endTime - startTime;
 
         for (Map.Entry<String, Sigma70Consensus> entry : consensus.entrySet())
             System.out.println(entry.getKey() + " " + entry.getValue());
 
-        System.out.println("Executing time in seconds: " + timeElapsed / 1000000000);
+        System.out.println("Executing time in seconds: " + df2.format(timeElapsed/ 1000000000.0));
 
-        executorServiceLC.shutdown();
+
     }
 }

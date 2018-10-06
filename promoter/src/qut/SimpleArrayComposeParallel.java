@@ -6,13 +6,12 @@ import jaligner.matrix.Matrix;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
 
-public class SimpleParallel extends Sequential{
+public class SimpleArrayComposeParallel extends Sequential{
     private static ReentrantLock lock = new ReentrantLock(true);
 
     private static final Matrix BLOSUM_62 = BLOSUM62.Load();
@@ -73,8 +72,12 @@ public class SimpleParallel extends Sequential{
 
     public static void run(String referenceFile, String dir) throws IOException {
         List<Gene> referenceGenes = ParseReferenceGenes(referenceFile);
-        for (String filename : ListGenbankFiles(dir)) {
-            GenbankRecord record = Parse(filename);
+        List<GenbankRecord> records = new ArrayList<>();
+
+        for (String filename : ListGenbankFiles(dir))
+            records.add(Parse(filename));
+
+        for (GenbankRecord record : records) {
             for (Gene referenceGene : referenceGenes) {
                 for (Gene gene : record.genes)
                     new Thread(new FindGeneRunnable(lock, gene, referenceGene, record, consensus)).start();
@@ -85,17 +88,19 @@ public class SimpleParallel extends Sequential{
     public static void main(String[] args) throws IOException, InterruptedException {
         Object SYN_LOCK = new Object();
         long startTime = System.nanoTime();
+        int synTimeOut = 2000;
 
         run("referenceGenes.list", "Ecoli");
         synchronized (SYN_LOCK) {
-            SYN_LOCK.wait(1000);
+            SYN_LOCK.wait(synTimeOut);
         }
         long endTime = System.nanoTime();
-        long timeElapsed = endTime - startTime;
+        long timeElapsed = endTime - startTime - (synTimeOut * 1000000 );
 
         for (Map.Entry<String, Sigma70Consensus> entry : consensus.entrySet())
             System.out.println(entry.getKey() + " " + entry.getValue());
 
-        System.out.println("Executing time in seconds: " + timeElapsed / 1000000000);
+        System.out.println("Executing time in seconds: " + df2.format(timeElapsed/ 1000000000.0));
     }
 }
+//78
