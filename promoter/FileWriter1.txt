@@ -21,6 +21,29 @@ Test #19/20 164.8 seconds (Correct output)
 Test #20/20 163.18 seconds (Correct output)
 Average runtime: 158.13
 
+    --:Sequential(Modified, 1 thread only):--
+Test #1/20 154.17 seconds (Correct output)
+Test #2/20 155.94 seconds (Correct output)
+Test #3/20 157.1 seconds (Correct output)
+Test #4/20 155.91 seconds (Correct output)
+Test #5/20 157.33 seconds (Correct output)
+Test #6/20 157.77 seconds (Correct output)
+Test #7/20 156.35 seconds (Correct output)
+Test #8/20 156.47 seconds (Correct output)
+Test #9/20 156.96 seconds (Correct output)
+Test #10/20 158.38 seconds (Correct output)
+Test #11/20 155.95 seconds (Correct output)
+Test #12/20 156.56 seconds (Correct output)
+Test #13/20 155.98 seconds (Correct output)
+Test #14/20 158.58 seconds (Correct output)
+Test #15/20 157.69 seconds (Correct output)
+Test #16/20 155.56 seconds (Correct output)
+Test #17/20 157.49 seconds (Correct output)
+Test #18/20 157.49 seconds (Correct output)
+Test #19/20 155.51 seconds (Correct output)
+Test #20/20 156.74 seconds (Correct output)
+Average runtime: 156.7
+
     --:Simple Parallel(Runs at max threads(8) ):--
 Test #1/20 35.79 seconds (Correct output)
 Test #2/20 35.5 seconds (Correct output)
@@ -44,11 +67,31 @@ Test #19/20 35.61 seconds (Correct output)
 Test #20/20 34.9 seconds (Correct output)
 Average runtime: 35.25
 
+
 --------------------------------------------
 Running on 1 threads.
 Running 20 tests on each
 --------------------------------------------
 
     --:ExecutorParallel (Running on 1 threads):--
-Test #1/20 152.82 seconds (Correct output)
-Test #2/20 159.21 seconds (Correct output)
+Test #1/20 147.85 seconds (Correct output)
+Test #2/20 151.9 seconds (Correct output)
+Test #3/20 154.39 seconds (Correct output)
+Test #4/20 153.83 seconds (Correct output)
+Test #5/20 150.21 seconds (Correct output)
+Test #6/20 150.47 seconds (Correct output)
+Test #7/20 157.97 seconds (Correct output)
+Test #8/20 154.77 seconds (Correct output)
+Test #9/20 157.57 seconds (Correct output)
+Test #10/20 151.15 seconds (Correct output)
+Test #11/20 154.23 seconds (Correct output)
+Test #12/20 156.68 seconds (Correct output)
+Test #13/20 155.06 seconds (Correct output)
+Test #14/20 151.66 seconds (Correct output)
+Test #15/20 157.88 seconds (Correct output)
+Test #16/20 157.6 seconds (Correct output)
+Test #17/20 154.41 seconds (Correct output)
+Test #18/20 150.49 seconds (Correct output)
+Test #19/20 156.66 seconds (Correct output)
+Test #20/20 156.34 seconds (Correct output)
+Average runtime: 154.06
