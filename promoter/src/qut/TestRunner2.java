@@ -1,5 +1,7 @@
 package qut;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.Map;
@@ -7,15 +9,13 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.io.FileWriter;
-import java.io.File;
 
-public class TestRunner extends Sequential {
+public class TestRunner2 extends Sequential {
     public static int timesToRun = 20;
     public static int [] threadArray = {2};
 
     private static void saveResults(String data) {
-        File file = new File("./FileWriter2.txt");
+        File file = new File("./FileWriter3.txt");
         FileWriter fr = null;
         try {
             fr = new FileWriter(file, true);
@@ -188,136 +188,136 @@ public class TestRunner extends Sequential {
             saveResults(disp);
 
             // Get Average Executor Parallel time
-//            disp = "    --:ExecutorParallel (Running on " + numberOfThreads + " threads):--\n";
-//            avgTime = 0.0;
-//            for (int runNumber = 0; runNumber < timesToRun; runNumber++) {
-//                ExecutorService executorServiceP = Executors.newFixedThreadPool(numberOfThreads);
-//                startTime = System.nanoTime();
-//
-//                ExecutorParallel.run("referenceGenes.list", "Ecoli", executorServiceP);
-//
-//                executorServiceP.shutdown();
-//                try {
-//                    executorServiceP.awaitTermination(10, TimeUnit.MINUTES);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//                executorServiceP = null;
-//
-//                endTime = System.nanoTime();
-//                timeElapsed = endTime - startTime;
-//                avgTime += timeElapsed;
-//
-//                disp += "Test #" + (runNumber + 1) + "/" + timesToRun + " " + df2.format(timeElapsed / 1000000000) + " seconds";
-//
-//                for (Map.Entry<String, Sigma70Consensus> entry : consensus.entrySet())
-//                    runOutput += entry.getKey() + entry.getValue();
-//
-//                if (testingOutput.equals(runOutput))
-//                    disp += " (Correct output)\n";
-//                else
-//                    disp += " *** OUTPUT IS FALSE ***\n";
-//
-//                System.out.print(disp);
-//                saveResults(disp);
-//                disp = "";
-//
-//                consensus.clear();
-//                runOutput = "";
-//            }
-//            avgTime /= timesToRun;
-//            disp = "Average runtime: " + df2.format(avgTime / 1000000000) + "\n\n";
-//
-//            System.out.print(disp);
-//            saveResults(disp);
+            disp = "    --:ExecutorParallel (Running on " + numberOfThreads + " threads):--\n";
+            avgTime = 0.0;
+            for (int runNumber = 0; runNumber < timesToRun; runNumber++) {
+                ExecutorService executorServiceP = Executors.newFixedThreadPool(numberOfThreads);
+                startTime = System.nanoTime();
+
+                ExecutorParallel.run("referenceGenes.list", "Ecoli", executorServiceP);
+
+                executorServiceP.shutdown();
+                try {
+                    executorServiceP.awaitTermination(10, TimeUnit.MINUTES);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                executorServiceP = null;
+
+                endTime = System.nanoTime();
+                timeElapsed = endTime - startTime;
+                avgTime += timeElapsed;
+
+                disp += "Test #" + (runNumber + 1) + "/" + timesToRun + " " + df2.format(timeElapsed / 1000000000) + " seconds";
+
+                for (Map.Entry<String, Sigma70Consensus> entry : consensus.entrySet())
+                    runOutput += entry.getKey() + entry.getValue();
+
+                if (testingOutput.equals(runOutput))
+                    disp += " (Correct output)\n";
+                else
+                    disp += " *** OUTPUT IS FALSE ***\n";
+
+                System.out.print(disp);
+                saveResults(disp);
+                disp = "";
+
+                consensus.clear();
+                runOutput = "";
+            }
+            avgTime /= timesToRun;
+            disp = "Average runtime: " + df2.format(avgTime / 1000000000) + "\n\n";
+
+            System.out.print(disp);
+            saveResults(disp);
             //////////////////////////
 
 
             // Get Average Executor Lambda Parallel time
-//            disp = "    --:ExecutorLambdaParallel (Running on " + numberOfThreads + " threads):--\n";
-//            avgTime = 0.0;
-//
-//            for (int runNumber = 0; runNumber < timesToRun; runNumber++) {
-//                ExecutorService executorServiceLP = Executors.newFixedThreadPool(numberOfThreads);
-//                startTime = System.nanoTime();
-//
-//                ExecutorLambdaParallel.run("referenceGenes.list", "Ecoli", executorServiceLP);
-//
-//                executorServiceLP.shutdown();
-//                try {
-//                    executorServiceLP.awaitTermination(10, TimeUnit.MINUTES);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//                executorServiceLP = null;
-//
-//                endTime = System.nanoTime();
-//                timeElapsed = endTime - startTime;
-//                avgTime += timeElapsed;
-//
-//                disp += "Test #" + (runNumber + 1) + "/" + timesToRun + " " + df2.format(timeElapsed / 1000000000) + " seconds";
-//
-//                for (Map.Entry<String, Sigma70Consensus> entry : consensus.entrySet())
-//                    runOutput += entry.getKey() + entry.getValue();
-//
-//                if (testingOutput.equals(runOutput))
-//                    disp += " (Correct output)\n";
-//                else
-//                    disp += " *** OUTPUT IS FALSE ***\n";
-//
-//                System.out.print(disp);
-//                saveResults(disp);
-//                disp = "";
-//
-//                consensus.clear();
-//                runOutput = "";
-//            }
-//
-//            avgTime /= timesToRun;
-//            disp = "Average runtime: " + df2.format(avgTime / 1000000000) + "\n\n";
-//
-//            System.out.print(disp);
-//            saveResults(disp);
+            disp = "    --:ExecutorLambdaParallel (Running on " + numberOfThreads + " threads):--\n";
+            avgTime = 0.0;
+
+            for (int runNumber = 0; runNumber < timesToRun; runNumber++) {
+                ExecutorService executorServiceLP = Executors.newFixedThreadPool(numberOfThreads);
+                startTime = System.nanoTime();
+
+                ExecutorLambdaParallel.run("referenceGenes.list", "Ecoli", executorServiceLP);
+
+                executorServiceLP.shutdown();
+                try {
+                    executorServiceLP.awaitTermination(10, TimeUnit.MINUTES);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                executorServiceLP = null;
+
+                endTime = System.nanoTime();
+                timeElapsed = endTime - startTime;
+                avgTime += timeElapsed;
+
+                disp += "Test #" + (runNumber + 1) + "/" + timesToRun + " " + df2.format(timeElapsed / 1000000000) + " seconds";
+
+                for (Map.Entry<String, Sigma70Consensus> entry : consensus.entrySet())
+                    runOutput += entry.getKey() + entry.getValue();
+
+                if (testingOutput.equals(runOutput))
+                    disp += " (Correct output)\n";
+                else
+                    disp += " *** OUTPUT IS FALSE ***\n";
+
+                System.out.print(disp);
+                saveResults(disp);
+                disp = "";
+
+                consensus.clear();
+                runOutput = "";
+            }
+
+            avgTime /= timesToRun;
+            disp = "Average runtime: " + df2.format(avgTime / 1000000000) + "\n\n";
+
+            System.out.print(disp);
+            saveResults(disp);
 
             //////////////////////////
 
 
             // Get Average Executor Lambda Callable time
-//            disp = "    --:ExecutorLambdaCallable (Running on " + numberOfThreads + " threads):--\n";
-//            avgTime = 0.0;
-//            ExecutorService executorServiceLC = Executors.newFixedThreadPool(numberOfThreads);
-//            for (int runNumber = 0; runNumber < timesToRun; runNumber++) {
-//                startTime = System.nanoTime();
-//
-//                ExecutorLambdaCallable.run("referenceGenes.list", "Ecoli", executorServiceLC);
-//
-//                endTime = System.nanoTime();
-//                timeElapsed = endTime - startTime;
-//                avgTime += timeElapsed;
-//
-//                disp += "Test #" + (runNumber + 1) + "/" + timesToRun + " " + df2.format(timeElapsed / 1000000000) + " seconds";
-//
-//                for (Map.Entry<String, Sigma70Consensus> entry : consensus.entrySet())
-//                    runOutput += entry.getKey() + entry.getValue();
-//
-//                if (testingOutput.equals(runOutput))
-//                    disp += " (Correct output)\n";
-//                else
-//                    disp += " *** OUTPUT IS FALSE ***\n";
-//
-//                System.out.print(disp);
-//                saveResults(disp);
-//                disp = "";
-//
-//                consensus.clear();
-//                runOutput = "";
-//            }
-//            executorServiceLC.shutdown();
-//            avgTime /= timesToRun;
-//            disp = "Average runtime: " + df2.format(avgTime / 1000000000) + "\n\n";
-//
-//            System.out.print(disp);
-//            saveResults(disp);
+            disp = "    --:ExecutorLambdaCallable (Running on " + numberOfThreads + " threads):--\n";
+            avgTime = 0.0;
+            ExecutorService executorServiceLC = Executors.newFixedThreadPool(numberOfThreads);
+            for (int runNumber = 0; runNumber < timesToRun; runNumber++) {
+                startTime = System.nanoTime();
+
+                ExecutorLambdaCallable.run("referenceGenes.list", "Ecoli", executorServiceLC);
+
+                endTime = System.nanoTime();
+                timeElapsed = endTime - startTime;
+                avgTime += timeElapsed;
+
+                disp += "Test #" + (runNumber + 1) + "/" + timesToRun + " " + df2.format(timeElapsed / 1000000000) + " seconds";
+
+                for (Map.Entry<String, Sigma70Consensus> entry : consensus.entrySet())
+                    runOutput += entry.getKey() + entry.getValue();
+
+                if (testingOutput.equals(runOutput))
+                    disp += " (Correct output)\n";
+                else
+                    disp += " *** OUTPUT IS FALSE ***\n";
+
+                System.out.print(disp);
+                saveResults(disp);
+                disp = "";
+
+                consensus.clear();
+                runOutput = "";
+            }
+            executorServiceLC.shutdown();
+            avgTime /= timesToRun;
+            disp = "Average runtime: " + df2.format(avgTime / 1000000000) + "\n\n";
+
+            System.out.print(disp);
+            saveResults(disp);
             //////////////////////////
 
 

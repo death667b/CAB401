@@ -1,0 +1,76 @@
+--------------------------------------------
+Running on 2 threads.
+Running 20 tests on each
+--------------------------------------------
+
+    --:ExecutorParallel (Running on 2 threads):--
+Test #1/20 80.98 seconds (Correct output)
+Test #2/20 82.04 seconds (Correct output)
+Test #3/20 82.06 seconds (Correct output)
+Test #4/20 81.85 seconds (Correct output)
+Test #5/20 83.02 seconds (Correct output)
+Test #6/20 83.84 seconds (Correct output)
+Test #7/20 85.71 seconds (Correct output)
+Test #8/20 85.25 seconds (Correct output)
+Test #9/20 85.46 seconds (Correct output)
+Test #10/20 84.8 seconds (Correct output)
+Test #11/20 84.08 seconds (Correct output)
+Test #12/20 85.71 seconds (Correct output)
+Test #13/20 84.57 seconds (Correct output)
+Test #14/20 84.62 seconds (Correct output)
+Test #15/20 85.28 seconds (Correct output)
+Test #16/20 84.15 seconds (Correct output)
+Test #17/20 85.27 seconds (Correct output)
+Test #18/20 85.15 seconds (Correct output)
+Test #19/20 85.62 seconds (Correct output)
+Test #20/20 85.86 seconds (Correct output)
+Average runtime: 84.27
+
+    --:ExecutorLambdaParallel (Running on 2 threads):--
+Test #1/20 84.43 seconds (Correct output)
+Test #2/20 84.76 seconds (Correct output)
+Test #3/20 85.23 seconds (Correct output)
+Test #4/20 85.25 seconds (Correct output)
+Test #5/20 83.74 seconds (Correct output)
+Test #6/20 85.17 seconds (Correct output)
+Test #7/20 85.83 seconds (Correct output)
+Test #8/20 85.43 seconds (Correct output)
+Test #9/20 86.04 seconds (Correct output)
+Test #10/20 85.25 seconds (Correct output)
+Test #11/20 85.0 seconds (Correct output)
+Test #12/20 84.14 seconds (Correct output)
+Test #13/20 84.83 seconds (Correct output)
+Test #14/20 85.4 seconds (Correct output)
+Test #15/20 85.14 seconds (Correct output)
+Test #16/20 84.9 seconds (Correct output)
+Test #17/20 85.32 seconds (Correct output)
+Test #18/20 84.72 seconds (Correct output)
+Test #19/20 84.95 seconds (Correct output)
+Test #20/20 85.23 seconds (Correct output)
+Average runtime: 85.04
+
+    --:ExecutorLambdaCallable (Running on 2 threads):--
+Test #1/20 85.23 seconds (Correct output)
+Test #2/20 86.06 seconds (Correct output)
+Test #3/20 86.01 seconds (Correct output)
+Test #4/20 84.52 seconds (Correct output)
+Test #5/20 85.79 seconds (Correct output)
+Test #6/20 86.5 seconds (Correct output)
+Test #7/20 84.41 seconds (Correct output)
+Test #8/20 86.46 seconds (Correct output)
+Test #9/20 86.0 seconds (Correct output)
+Test #10/20 84.18 seconds (Correct output)
+Test #11/20 85.99 seconds (Correct output)
+Test #12/20 86.21 seconds (Correct output)
+Test #13/20 84.77 seconds (Correct output)
+Test #14/20 85.38 seconds (Correct output)
+Test #15/20 85.91 seconds (Correct output)
+Test #16/20 84.91 seconds (Correct output)
+Test #17/20 85.61 seconds (Correct output)
+Test #18/20 85.67 seconds (Correct output)
+Test #19/20 84.81 seconds (Correct output)
+Test #20/20 85.94 seconds (Correct output)
+Average runtime: 85.52
+
+    --:ExecutorCallable (Running on 2 threads):--
+Test #1/20 86.89 seconds (Correct output)
